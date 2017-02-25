@@ -58,7 +58,7 @@ func TestSKINNY(t *testing.T) {
 		c, _ := hex.DecodeString(tt.cipher)
 
 		t.Log(p, k, i)
-		enc(p, k, i)
+		Encrypt(p, k, i)
 
 		if !bytes.Equal(p, c) {
 			t.Errorf("enc(%v,%v,%v)=%v, want %v", tt.plain, tt.key, i, p, tt.cipher)
@@ -67,7 +67,7 @@ func TestSKINNY(t *testing.T) {
 		p, _ = hex.DecodeString(tt.plain)
 
 		t.Log(c, k, i)
-		dec(c, k, i)
+		Decrypt(c, k, i)
 
 		if !bytes.Equal(p, c) {
 			t.Errorf("dec(%v,%v,%v)=%v, want %v", tt.key, tt.cipher, i, p, tt.plain)

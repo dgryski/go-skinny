@@ -311,7 +311,7 @@ func MixColumn_inv(state *[4][4]byte) {
 }
 
 // decryption function of Skinny
-func dec(input []byte, userkey []byte, ver int) {
+func Decrypt(input []byte, userkey []byte, ver int) {
 
 	var state [4][4]byte
 	var dummy [4][4]byte
@@ -382,7 +382,7 @@ func dec(input []byte, userkey []byte, ver int) {
 }
 
 // encryption function of Skinny
-func enc(input []byte, userkey []byte, ver int) {
+func Encrypt(input []byte, userkey []byte, ver int) {
 
 	var state [4][4]byte
 	var keyCells [3][4][4]byte
