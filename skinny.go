@@ -36,15 +36,15 @@ var (
 	sbox_8_inv = [256]byte{0xac, 0xe8, 0x68, 0x3c, 0x6c, 0x38, 0xa8, 0xec, 0xaa, 0xae, 0x3a, 0x3e, 0x6a, 0x6e, 0xea, 0xee, 0xa6, 0xa3, 0x33, 0x36, 0x66, 0x63, 0xe3, 0xe6, 0xe1, 0xa4, 0x61, 0x34, 0x31, 0x64, 0xa1, 0xe4, 0x8d, 0xc9, 0x49, 0x1d, 0x4d, 0x19, 0x89, 0xcd, 0x8b, 0x8f, 0x1b, 0x1f, 0x4b, 0x4f, 0xcb, 0xcf, 0x85, 0xc0, 0x40, 0x15, 0x45, 0x10, 0x80, 0xc5, 0x82, 0x87, 0x12, 0x17, 0x42, 0x47, 0xc2, 0xc7, 0x96, 0x93, 0x03, 0x06, 0x56, 0x53, 0xd3, 0xd6, 0xd1, 0x94, 0x51, 0x04, 0x01, 0x54, 0x91, 0xd4, 0x9c, 0xd8, 0x58, 0x0c, 0x5c, 0x08, 0x98, 0xdc, 0x9a, 0x9e, 0x0a, 0x0e, 0x5a, 0x5e, 0xda, 0xde, 0x95, 0xd0, 0x50, 0x05, 0x55, 0x00, 0x90, 0xd5, 0x92, 0x97, 0x02, 0x07, 0x52, 0x57, 0xd2, 0xd7, 0x9d, 0xd9, 0x59, 0x0d, 0x5d, 0x09, 0x99, 0xdd, 0x9b, 0x9f, 0x0b, 0x0f, 0x5b, 0x5f, 0xdb, 0xdf, 0x16, 0x13, 0x83, 0x86, 0x46, 0x43, 0xc3, 0xc6, 0x41, 0x14, 0xc1, 0x84, 0x11, 0x44, 0x81, 0xc4, 0x1c, 0x48, 0xc8, 0x8c, 0x4c, 0x18, 0x88, 0xcc, 0x1a, 0x1e, 0x8a, 0x8e, 0x4a, 0x4e, 0xca, 0xce, 0x35, 0x60, 0xe0, 0xa5, 0x65, 0x30, 0xa0, 0xe5, 0x32, 0x37, 0xa2, 0xa7, 0x62, 0x67, 0xe2, 0xe7, 0x3d, 0x69, 0xe9, 0xad, 0x6d, 0x39, 0xa9, 0xed, 0x3b, 0x3f, 0xab, 0xaf, 0x6b, 0x6f, 0xeb, 0xef, 0x26, 0x23, 0xb3, 0xb6, 0x76, 0x73, 0xf3, 0xf6, 0x71, 0x24, 0xf1, 0xb4, 0x21, 0x74, 0xb1, 0xf4, 0x2c, 0x78, 0xf8, 0xbc, 0x7c, 0x28, 0xb8, 0xfc, 0x2a, 0x2e, 0xba, 0xbe, 0x7a, 0x7e, 0xfa, 0xfe, 0x25, 0x70, 0xf0, 0xb5, 0x75, 0x20, 0xb0, 0xf5, 0x22, 0x27, 0xb2, 0xb7, 0x72, 0x77, 0xf2, 0xf7, 0x2d, 0x79, 0xf9, 0xbd, 0x7d, 0x29, 0xb9, 0xfd, 0x2b, 0x2f, 0xbb, 0xbf, 0x7b, 0x7f, 0xfb, 0xff}
 
 	// ShiftAndSwitchRows permutation
-	P     = [16]byte{0, 1, 2, 3, 7, 4, 5, 6, 10, 11, 8, 9, 13, 14, 15, 12}
-	P_inv = [16]byte{0, 1, 2, 3, 5, 6, 7, 4, 10, 11, 8, 9, 15, 12, 13, 14}
+	_P     = [16]byte{0, 1, 2, 3, 7, 4, 5, 6, 10, 11, 8, 9, 13, 14, 15, 12}
+	_P_inv = [16]byte{0, 1, 2, 3, 5, 6, 7, 4, 10, 11, 8, 9, 15, 12, 13, 14}
 
 	// Tweakey permutation
-	TWEAKEY_P     = [16]byte{9, 15, 8, 13, 10, 14, 12, 11, 0, 1, 2, 3, 4, 5, 6, 7}
-	TWEAKEY_P_inv = [16]byte{8, 9, 10, 11, 12, 13, 14, 15, 2, 0, 4, 7, 6, 3, 5, 1}
+	_TWEAKEY_P     = [16]byte{9, 15, 8, 13, 10, 14, 12, 11, 0, 1, 2, 3, 4, 5, 6, 7}
+	_TWEAKEY_P_inv = [16]byte{8, 9, 10, 11, 12, 13, 14, 15, 2, 0, 4, 7, 6, 3, 5, 1}
 
 	// round constants
-	RC = [62]byte{
+	_RC = [62]byte{
 		0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3E, 0x3D, 0x3B, 0x37, 0x2F,
 		0x1E, 0x3C, 0x39, 0x33, 0x27, 0x0E, 0x1D, 0x3A, 0x35, 0x2B,
 		0x16, 0x2C, 0x18, 0x30, 0x21, 0x02, 0x05, 0x0B, 0x17, 0x2E,
@@ -55,7 +55,7 @@ var (
 )
 
 // Extract and apply the subtweakey to the internal state (must be the two top rows XORed together), then update the tweakey state
-func AddKey(state *[4][4]byte, keyCells *[3][4][4]byte, ver int) {
+func addKey(state *[4][4]byte, keyCells *[3][4][4]byte, ver int) {
 	var i, j, k int
 	var pos byte
 	var keyCells_tmp [3][4][4]byte
@@ -77,7 +77,7 @@ func AddKey(state *[4][4]byte, keyCells *[3][4][4]byte, ver int) {
 		for i = 0; i < 4; i++ {
 			for j = 0; j < 4; j++ {
 				//application of the TWEAKEY permutation
-				pos = TWEAKEY_P[j+4*i]
+				pos = _TWEAKEY_P[j+4*i]
 				keyCells_tmp[k][i][j] = keyCells[k][pos>>2][pos&0x3]
 			}
 		}
@@ -115,7 +115,7 @@ func AddKey(state *[4][4]byte, keyCells *[3][4][4]byte, ver int) {
 }
 
 // Extract and apply the subtweakey to the internal state (must be the two top rows XORed together), then update the tweakey state (inverse function}
-func AddKey_inv(state *[4][4]byte, keyCells *[3][4][4]byte, ver int) {
+func addKey_inv(state *[4][4]byte, keyCells *[3][4][4]byte, ver int) {
 	var i, j, k int
 	var pos byte
 	var keyCells_tmp [3][4][4]byte
@@ -125,7 +125,7 @@ func AddKey_inv(state *[4][4]byte, keyCells *[3][4][4]byte, ver int) {
 		for i = 0; i < 4; i++ {
 			for j = 0; j < 4; j++ {
 				//application of the inverse TWEAKEY permutation
-				pos = TWEAKEY_P_inv[j+4*i]
+				pos = _TWEAKEY_P_inv[j+4*i]
 				keyCells_tmp[k][i][j] = keyCells[k][pos>>2][pos&0x3]
 			}
 		}
@@ -175,14 +175,14 @@ func AddKey_inv(state *[4][4]byte, keyCells *[3][4][4]byte, ver int) {
 }
 
 // Apply the constants: using a LFSR counter on 6 bits, we XOR the 6 bits to the first 6 bits of the internal state
-func AddConstants(state *[4][4]byte, r int) {
-	state[0][0] ^= (RC[r] & 0xf)
-	state[1][0] ^= ((RC[r] >> 4) & 0x3)
+func addConstants(state *[4][4]byte, r int) {
+	state[0][0] ^= (_RC[r] & 0xf)
+	state[1][0] ^= ((_RC[r] >> 4) & 0x3)
 	state[2][0] ^= 0x2
 }
 
 // apply the 4-bit Sbox
-func SubCell4(state *[4][4]byte) {
+func subCell4(state *[4][4]byte) {
 	var i, j int
 	for i = 0; i < 4; i++ {
 		for j = 0; j < 4; j++ {
@@ -192,7 +192,7 @@ func SubCell4(state *[4][4]byte) {
 }
 
 // apply the 4-bit inverse Sbox
-func SubCell4_inv(state *[4][4]byte) {
+func subCell4_inv(state *[4][4]byte) {
 	var i, j int
 	for i = 0; i < 4; i++ {
 		for j = 0; j < 4; j++ {
@@ -202,7 +202,7 @@ func SubCell4_inv(state *[4][4]byte) {
 }
 
 // apply the 8-bit Sbox
-func SubCell8(state *[4][4]byte) {
+func subCell8(state *[4][4]byte) {
 	var i, j int
 	for i = 0; i < 4; i++ {
 		for j = 0; j < 4; j++ {
@@ -212,7 +212,7 @@ func SubCell8(state *[4][4]byte) {
 }
 
 // apply the 8-bit inverse Sbox
-func SubCell8_inv(state *[4][4]byte) {
+func subCell8_inv(state *[4][4]byte) {
 	var i, j int
 	for i = 0; i < 4; i++ {
 		for j = 0; j < 4; j++ {
@@ -222,7 +222,7 @@ func SubCell8_inv(state *[4][4]byte) {
 }
 
 // Apply the ShiftRows function
-func ShiftRows(state *[4][4]byte) {
+func shiftRows(state *[4][4]byte) {
 	var i, j int
 
 	var pos byte
@@ -232,7 +232,7 @@ func ShiftRows(state *[4][4]byte) {
 	for i = 0; i < 4; i++ {
 		for j = 0; j < 4; j++ {
 			//application of the ShiftRows permutation
-			pos = P[j+4*i]
+			pos = _P[j+4*i]
 			state_tmp[i][j] = state[pos>>2][pos&0x3]
 		}
 	}
@@ -245,7 +245,7 @@ func ShiftRows(state *[4][4]byte) {
 }
 
 // Apply the inverse ShiftRows function
-func ShiftRows_inv(state *[4][4]byte) {
+func shiftRows_inv(state *[4][4]byte) {
 	var i, j int
 
 	var pos byte
@@ -255,7 +255,7 @@ func ShiftRows_inv(state *[4][4]byte) {
 	for i = 0; i < 4; i++ {
 		for j = 0; j < 4; j++ {
 			//application of the inverse ShiftRows permutation
-			pos = P_inv[j+4*i]
+			pos = _P_inv[j+4*i]
 			state_tmp[i][j] = state[pos>>2][pos&0x3]
 		}
 	}
@@ -273,7 +273,7 @@ func ShiftRows_inv(state *[4][4]byte) {
 //1 0 0 0
 //0 1 1 0
 //1 0 1 0
-func MixColumn(state *[4][4]byte) {
+func mixColumn(state *[4][4]byte) {
 	var j int
 
 	var temp byte
@@ -292,7 +292,7 @@ func MixColumn(state *[4][4]byte) {
 }
 
 // Apply the inverse linear diffusion matrix
-func MixColumn_inv(state *[4][4]byte) {
+func mixColumn_inv(state *[4][4]byte) {
 	var j int
 
 	var temp byte
@@ -355,18 +355,18 @@ func Decrypt(input []byte, userkey []byte, ver int) {
 	}
 
 	for i = versions[ver][2] - 1; i >= 0; i-- {
-		AddKey(&dummy, &keyCells, ver)
+		addKey(&dummy, &keyCells, ver)
 	}
 
 	for i = versions[ver][2] - 1; i >= 0; i-- {
-		MixColumn_inv(&state)
-		ShiftRows_inv(&state)
-		AddKey_inv(&state, &keyCells, ver)
-		AddConstants(&state, i)
+		mixColumn_inv(&state)
+		shiftRows_inv(&state)
+		addKey_inv(&state, &keyCells, ver)
+		addConstants(&state, i)
 		if versions[ver][0] == 64 {
-			SubCell4_inv(&state)
+			subCell4_inv(&state)
 		} else {
-			SubCell8_inv(&state)
+			subCell8_inv(&state)
 		}
 	}
 
@@ -424,14 +424,14 @@ func Encrypt(input []byte, userkey []byte, ver int) {
 
 	for i = 0; i < versions[ver][2]; i++ {
 		if versions[ver][0] == 64 {
-			SubCell4(&state)
+			subCell4(&state)
 		} else {
-			SubCell8(&state)
+			subCell8(&state)
 		}
-		AddConstants(&state, i)
-		AddKey(&state, &keyCells, ver)
-		ShiftRows(&state)
-		MixColumn(&state)
+		addConstants(&state, i)
+		addKey(&state, &keyCells, ver)
+		shiftRows(&state)
+		mixColumn(&state)
 	}
 	//The last subtweakey should not be added
 
