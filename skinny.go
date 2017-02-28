@@ -54,8 +54,10 @@ var (
 		0x10, 0x20}
 )
 
+type state [4][4]byte
+
 // Extract and apply the subtweakey to the internal state (must be the two top rows XORed together), then update the tweakey state
-func addKey(state *[4][4]byte, keyCells *[3][4][4]byte, ver int) {
+func (s *state) addKey(keyCells *[3][4][4]byte, ver int) {
 	var i, j, k int
 	var pos byte
 	var keyCells_tmp [3][4][4]byte
@@ -63,11 +65,11 @@ func addKey(state *[4][4]byte, keyCells *[3][4][4]byte, ver int) {
 	// apply the subtweakey to the internal state
 	for i = 0; i <= 1; i++ {
 		for j = 0; j < 4; j++ {
-			state[i][j] ^= keyCells[0][i][j]
+			s[i][j] ^= keyCells[0][i][j]
 			if 2*versions[ver][0] == versions[ver][1] {
-				state[i][j] ^= keyCells[1][i][j]
+				s[i][j] ^= keyCells[1][i][j]
 			} else if 3*versions[ver][0] == versions[ver][1] {
-				state[i][j] ^= keyCells[1][i][j] ^ keyCells[2][i][j]
+				s[i][j] ^= keyCells[1][i][j] ^ keyCells[2][i][j]
 			}
 		}
 	}
@@ -115,7 +117,7 @@ func addKey(state *[4][4]byte, keyCells *[3][4][4]byte, ver int) {
 }
 
 // Extract and apply the subtweakey to the internal state (must be the two top rows XORed together), then update the tweakey state (inverse function}
-func addKey_inv(state *[4][4]byte, keyCells *[3][4][4]byte, ver int) {
+func (s *state) addKey_inv(keyCells *[3][4][4]byte, ver int) {
 	var i, j, k int
 	var pos byte
 	var keyCells_tmp [3][4][4]byte
@@ -164,65 +166,65 @@ func addKey_inv(state *[4][4]byte, keyCells *[3][4][4]byte, ver int) {
 	// apply the subtweakey to the internal state
 	for i = 0; i <= 1; i++ {
 		for j = 0; j < 4; j++ {
-			state[i][j] ^= keyCells[0][i][j]
+			s[i][j] ^= keyCells[0][i][j]
 			if 2*versions[ver][0] == versions[ver][1] {
-				state[i][j] ^= keyCells[1][i][j]
+				s[i][j] ^= keyCells[1][i][j]
 			} else if 3*versions[ver][0] == versions[ver][1] {
-				state[i][j] ^= keyCells[1][i][j] ^ keyCells[2][i][j]
+				s[i][j] ^= keyCells[1][i][j] ^ keyCells[2][i][j]
 			}
 		}
 	}
 }
 
 // Apply the constants: using a LFSR counter on 6 bits, we XOR the 6 bits to the first 6 bits of the internal state
-func addConstants(state *[4][4]byte, r int) {
-	state[0][0] ^= (_RC[r] & 0xf)
-	state[1][0] ^= ((_RC[r] >> 4) & 0x3)
-	state[2][0] ^= 0x2
+func (s *state) addConstants(r int) {
+	s[0][0] ^= (_RC[r] & 0xf)
+	s[1][0] ^= ((_RC[r] >> 4) & 0x3)
+	s[2][0] ^= 0x2
 }
 
 // apply the 4-bit Sbox
-func subCell4(state *[4][4]byte) {
+func (s *state) subCell4() {
 	var i, j int
 	for i = 0; i < 4; i++ {
 		for j = 0; j < 4; j++ {
-			state[i][j] = sbox_4[state[i][j]]
+			s[i][j] = sbox_4[s[i][j]]
 		}
 	}
 }
 
 // apply the 4-bit inverse Sbox
-func subCell4_inv(state *[4][4]byte) {
+func (s *state) subCell4_inv() {
 	var i, j int
 	for i = 0; i < 4; i++ {
 		for j = 0; j < 4; j++ {
-			state[i][j] = sbox_4_inv[state[i][j]]
+			s[i][j] = sbox_4_inv[s[i][j]]
 		}
 	}
 }
 
 // apply the 8-bit Sbox
-func subCell8(state *[4][4]byte) {
+func (s *state) subCell8() {
 	var i, j int
 	for i = 0; i < 4; i++ {
 		for j = 0; j < 4; j++ {
-			state[i][j] = sbox_8[state[i][j]]
+			s[i][j] = sbox_8[s[i][j]]
 		}
 	}
 }
 
 // apply the 8-bit inverse Sbox
-func subCell8_inv(state *[4][4]byte) {
+func (s *state) subCell8_inv() {
 	var i, j int
 	for i = 0; i < 4; i++ {
 		for j = 0; j < 4; j++ {
-			state[i][j] = sbox_8_inv[state[i][j]]
+			s[i][j] = sbox_8_inv[s[i][j]]
 		}
 	}
 }
 
 // Apply the ShiftRows function
-func shiftRows(state *[4][4]byte) {
+func (s *state) shiftRows() {
 	var i, j int
 
 	var pos byte
@@ -233,19 +235,19 @@ func shiftRows(state *[4][4]byte) {
 		for j = 0; j < 4; j++ {
 			//application of the ShiftRows permutation
 			pos = _P[j+4*i]
-			state_tmp[i][j] = state[pos>>2][pos&0x3]
+			state_tmp[i][j] = s[pos>>2][pos&0x3]
 		}
 	}
 
 	for i = 0; i < 4; i++ {
 		for j = 0; j < 4; j++ {
-			state[i][j] = state_tmp[i][j]
+			s[i][j] = state_tmp[i][j]
 		}
 	}
 }
 
 // Apply the inverse ShiftRows function
-func shiftRows_inv(state *[4][4]byte) {
+func (s *state) shiftRows_inv() {
 	var i, j int
 
 	var pos byte
@@ -256,13 +258,13 @@ func shiftRows_inv(state *[4][4]byte) {
 		for j = 0; j < 4; j++ {
 			//application of the inverse ShiftRows permutation
 			pos = _P_inv[j+4*i]
-			state_tmp[i][j] = state[pos>>2][pos&0x3]
+			state_tmp[i][j] = s[pos>>2][pos&0x3]
 		}
 	}
 
 	for i = 0; i < 4; i++ {
 		for j = 0; j < 4; j++ {
-			state[i][j] = state_tmp[i][j]
+			s[i][j] = state_tmp[i][j]
 		}
 	}
 }
@@ -273,48 +275,47 @@ func shiftRows_inv(state *[4][4]byte) {
 //1 0 0 0
 //0 1 1 0
 //1 0 1 0
-func mixColumn(state *[4][4]byte) {
+func (s *state) mixColumn() {
 	var j int
 
 	var temp byte
 
 	for j = 0; j < 4; j++ {
-		state[1][j] ^= state[2][j]
-		state[2][j] ^= state[0][j]
-		state[3][j] ^= state[2][j]
+		s[1][j] ^= s[2][j]
+		s[2][j] ^= s[0][j]
+		s[3][j] ^= s[2][j]
 
-		temp = state[3][j]
-		state[3][j] = state[2][j]
-		state[2][j] = state[1][j]
-		state[1][j] = state[0][j]
-		state[0][j] = temp
+		temp = s[3][j]
+		s[3][j] = s[2][j]
+		s[2][j] = s[1][j]
+		s[1][j] = s[0][j]
+		s[0][j] = temp
 	}
 }
 
 // Apply the inverse linear diffusion matrix
-func mixColumn_inv(state *[4][4]byte) {
+func (s *state) mixColumn_inv() {
 	var j int
 
 	var temp byte
 
 	for j = 0; j < 4; j++ {
-		temp = state[3][j]
-		state[3][j] = state[0][j]
-		state[0][j] = state[1][j]
-		state[1][j] = state[2][j]
-		state[2][j] = temp
+		temp = s[3][j]
+		s[3][j] = s[0][j]
+		s[0][j] = s[1][j]
+		s[1][j] = s[2][j]
+		s[2][j] = temp
 
-		state[3][j] ^= state[2][j]
-		state[2][j] ^= state[0][j]
-		state[1][j] ^= state[2][j]
+		s[3][j] ^= s[2][j]
+		s[2][j] ^= s[0][j]
+		s[1][j] ^= s[2][j]
 	}
 }
 
 // decryption function of Skinny
 func Decrypt(input []byte, userkey []byte, ver int) {
 
-	var state [4][4]byte
-	var dummy [4][4]byte
+	var s, dummy state
 
 	var keyCells [3][4][4]byte
 
@@ -323,7 +324,7 @@ func Decrypt(input []byte, userkey []byte, ver int) {
 	for i = 0; i < 16; i++ {
 		if versions[ver][0] == 64 {
 			if i&1 == 1 {
-				state[i>>2][i&0x3] = input[i>>1] & 0xF
+				s[i>>2][i&0x3] = input[i>>1] & 0xF
 				keyCells[0][i>>2][i&0x3] = userkey[i>>1] & 0xF
 				if versions[ver][1] >= 128 {
 					keyCells[1][i>>2][i&0x3] = userkey[(i+16)>>1] & 0xF
@@ -332,7 +333,7 @@ func Decrypt(input []byte, userkey []byte, ver int) {
 					keyCells[2][i>>2][i&0x3] = userkey[(i+32)>>1] & 0xF
 				}
 			} else {
-				state[i>>2][i&0x3] = (input[i>>1] >> 4) & 0xF
+				s[i>>2][i&0x3] = (input[i>>1] >> 4) & 0xF
 				keyCells[0][i>>2][i&0x3] = (userkey[i>>1] >> 4) & 0xF
 				if versions[ver][1] >= 128 {
 					keyCells[1][i>>2][i&0x3] = (userkey[(i+16)>>1] >> 4) & 0xF
@@ -342,7 +343,7 @@ func Decrypt(input []byte, userkey []byte, ver int) {
 				}
 			}
 		} else if versions[ver][0] == 128 {
-			state[i>>2][i&0x3] = input[i] & 0xFF
+			s[i>>2][i&0x3] = input[i] & 0xFF
 
 			keyCells[0][i>>2][i&0x3] = userkey[i] & 0xFF
 			if versions[ver][1] >= 256 {
@@ -355,28 +356,28 @@ func Decrypt(input []byte, userkey []byte, ver int) {
 	}
 
 	for i = versions[ver][2] - 1; i >= 0; i-- {
-		addKey(&dummy, &keyCells, ver)
+		dummy.addKey(&keyCells, ver)
 	}
 
 	for i = versions[ver][2] - 1; i >= 0; i-- {
-		mixColumn_inv(&state)
-		shiftRows_inv(&state)
-		addKey_inv(&state, &keyCells, ver)
-		addConstants(&state, i)
+		s.mixColumn_inv()
+		s.shiftRows_inv()
+		s.addKey_inv(&keyCells, ver)
+		s.addConstants(i)
 		if versions[ver][0] == 64 {
-			subCell4_inv(&state)
+			s.subCell4_inv()
 		} else {
-			subCell8_inv(&state)
+			s.subCell8_inv()
 		}
 	}
 
 	if versions[ver][0] == 64 {
 		for i = 0; i < 8; i++ {
-			input[i] = ((state[(2*i)>>2][(2*i)&0x3] & 0xF) << 4) | (state[(2*i+1)>>2][(2*i+1)&0x3] & 0xF)
+			input[i] = ((s[(2*i)>>2][(2*i)&0x3] & 0xF) << 4) | (s[(2*i+1)>>2][(2*i+1)&0x3] & 0xF)
 		}
 	} else if versions[ver][0] == 128 {
 		for i = 0; i < 16; i++ {
-			input[i] = state[i>>2][i&0x3] & 0xFF
+			input[i] = s[i>>2][i&0x3] & 0xFF
 		}
 	}
 }
@@ -384,7 +385,7 @@ func Decrypt(input []byte, userkey []byte, ver int) {
 // encryption function of Skinny
 func Encrypt(input []byte, userkey []byte, ver int) {
 
-	var state [4][4]byte
+	var s state
 	var keyCells [3][4][4]byte
 
 	var i int
@@ -392,7 +393,7 @@ func Encrypt(input []byte, userkey []byte, ver int) {
 	for i = 0; i < 16; i++ {
 		if versions[ver][0] == 64 {
 			if i&1 == 1 {
-				state[i>>2][i&0x3] = input[i>>1] & 0xF
+				s[i>>2][i&0x3] = input[i>>1] & 0xF
 				keyCells[0][i>>2][i&0x3] = userkey[i>>1] & 0xF
 				if versions[ver][1] >= 128 {
 					keyCells[1][i>>2][i&0x3] = userkey[(i+16)>>1] & 0xF
@@ -401,7 +402,7 @@ func Encrypt(input []byte, userkey []byte, ver int) {
 					keyCells[2][i>>2][i&0x3] = userkey[(i+32)>>1] & 0xF
 				}
 			} else {
-				state[i>>2][i&0x3] = (input[i>>1] >> 4) & 0xF
+				s[i>>2][i&0x3] = (input[i>>1] >> 4) & 0xF
 				keyCells[0][i>>2][i&0x3] = (userkey[i>>1] >> 4) & 0xF
 				if versions[ver][1] >= 128 {
 					keyCells[1][i>>2][i&0x3] = (userkey[(i+16)>>1] >> 4) & 0xF
@@ -411,7 +412,7 @@ func Encrypt(input []byte, userkey []byte, ver int) {
 				}
 			}
 		} else if versions[ver][0] == 128 {
-			state[i>>2][i&0x3] = input[i] & 0xFF
+			s[i>>2][i&0x3] = input[i] & 0xFF
 			keyCells[0][i>>2][i&0x3] = userkey[i] & 0xFF
 			if versions[ver][1] >= 256 {
 				keyCells[1][i>>2][i&0x3] = userkey[i+16] & 0xFF
@@ -424,24 +425,24 @@ func Encrypt(input []byte, userkey []byte, ver int) {
 
 	for i = 0; i < versions[ver][2]; i++ {
 		if versions[ver][0] == 64 {
-			subCell4(&state)
+			s.subCell4()
 		} else {
-			subCell8(&state)
+			s.subCell8()
 		}
-		addConstants(&state, i)
-		addKey(&state, &keyCells, ver)
-		shiftRows(&state)
-		mixColumn(&state)
+		s.addConstants(i)
+		s.addKey(&keyCells, ver)
+		s.shiftRows()
+		s.mixColumn()
 	}
 	//The last subtweakey should not be added
 
 	if versions[ver][0] == 64 {
 		for i = 0; i < 8; i++ {
-			input[i] = ((state[(2*i)>>2][(2*i)&0x3] & 0xF) << 4) | (state[(2*i+1)>>2][(2*i+1)&0x3] & 0xF)
+			input[i] = ((s[(2*i)>>2][(2*i)&0x3] & 0xF) << 4) | (s[(2*i+1)>>2][(2*i+1)&0x3] & 0xF)
 		}
 	} else if versions[ver][0] == 128 {
 		for i = 0; i < 16; i++ {
-			input[i] = state[i>>2][i&0x3] & 0xFF
+			input[i] = s[i>>2][i&0x3] & 0xFF
 		}
 	}
 }
