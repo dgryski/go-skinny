@@ -75,7 +75,7 @@ func (s *state) addKey(keyCells *[3][4][4]byte, ver int) {
 	}
 
 	// update the subtweakey states with the permutation
-	for k = 0; k < (int)(versions[ver][1]/versions[ver][0]); k++ {
+	for k = 0; k < (versions[ver][1] / versions[ver][0]); k++ {
 		for i = 0; i < 4; i++ {
 			for j = 0; j < 4; j++ {
 				//application of the TWEAKEY permutation
@@ -86,7 +86,7 @@ func (s *state) addKey(keyCells *[3][4][4]byte, ver int) {
 	}
 
 	// update the subtweakey states with the LFSRs
-	for k = 0; k < (int)(versions[ver][1]/versions[ver][0]); k++ {
+	for k = 0; k < (versions[ver][1] / versions[ver][0]); k++ {
 		for i = 0; i <= 1; i++ {
 			for j = 0; j < 4; j++ {
 				//application of LFSRs for TK updates
@@ -107,7 +107,7 @@ func (s *state) addKey(keyCells *[3][4][4]byte, ver int) {
 		}
 	}
 
-	for k = 0; k < (int)(versions[ver][1]/versions[ver][0]); k++ {
+	for k = 0; k < (versions[ver][1] / versions[ver][0]); k++ {
 		for i = 0; i < 4; i++ {
 			for j = 0; j < 4; j++ {
 				keyCells[k][i][j] = keyCells_tmp[k][i][j]
@@ -123,7 +123,7 @@ func (s *state) addKey_inv(keyCells *[3][4][4]byte, ver int) {
 	var keyCells_tmp [3][4][4]byte
 
 	// update the subtweakey states with the permutation
-	for k = 0; k < (int)(versions[ver][1]/versions[ver][0]); k++ {
+	for k = 0; k < (versions[ver][1] / versions[ver][0]); k++ {
 		for i = 0; i < 4; i++ {
 			for j = 0; j < 4; j++ {
 				//application of the inverse TWEAKEY permutation
@@ -134,7 +134,7 @@ func (s *state) addKey_inv(keyCells *[3][4][4]byte, ver int) {
 	}
 
 	// update the subtweakey states with the LFSRs
-	for k = 0; k < (int)(versions[ver][1]/versions[ver][0]); k++ {
+	for k = 0; k < (versions[ver][1] / versions[ver][0]); k++ {
 		for i = 2; i <= 3; i++ {
 			for j = 0; j < 4; j++ {
 				//application of inverse LFSRs for TK updates
@@ -155,7 +155,7 @@ func (s *state) addKey_inv(keyCells *[3][4][4]byte, ver int) {
 		}
 	}
 
-	for k = 0; k < (int)(versions[ver][1]/versions[ver][0]); k++ {
+	for k = 0; k < (versions[ver][1] / versions[ver][0]); k++ {
 		for i = 0; i < 4; i++ {
 			for j = 0; j < 4; j++ {
 				keyCells[k][i][j] = keyCells_tmp[k][i][j]
